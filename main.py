@@ -1,7 +1,8 @@
 from flask import Flask
 from flask import request
 from text import Text, process_sync, process_async
-# from exit import Exit
+from response import PostResponse
+import os
 
 # define Flask web app
 app = Flask(__name__)
@@ -16,25 +17,56 @@ def process_post_request(post_request):
     operation = post_request['operation']
     model = post_request['model']
 
-    # define text object
+    # instantiate Text object and PostResponse object
     text = Text(message, operation, model)
 
-    if operation == 'SYNC':
-        process_sync()
-    elif operation == 'ASYNC':
-        process_async()
-    else:
-        # todo - clarify with tutor how to handle this case
-        #  exit_with_code(Exit.BAD_OPERATION)
-        pass
+    # write message to file
+    with open("test.msg", "x") as file:
+        file.write(message)
 
-    return "Response: That worked!!!"
+    exec(f'chatterbox run --input-file test.msg')
+
+    print('chatterbox finished running...')
+
+    response = PostResponse(1, text, 'COMPLETED', './out/*.wav', os.path.getmtime('./out/*.wav'))
+
+    # if operation == 'SYNC':
+    #     process_sync()
+    #
+    # elif operation == 'ASYNC':
+    #     process_async()
+    # else:
+    #     # todo - clarify with tutor how to handle this case - exit_with_code(Exit.BAD_OPERATION) ?
+    #     pass
+
+    return "Response: That worked!!! ", response
+
+
+def process_get_request(get_request):
+    pass
+
+
+def process_delete_request(delete_request):
+    pass
 
 
 @app.route('/text', methods=['GET', 'POST'])
 def parse_request():
+
     if request.method == 'POST':
         response = process_post_request(request.json)
+
+    elif request.method == 'GET':
+        # response = process_get_request(request.json)
+        pass
+
+    elif request.method == 'DELETE':
+        # response = process_delete_request(request.json)
+        pass
+
+    else:
+        # todo - check with tutor how to handle this case
+        pass
 
     return response
 

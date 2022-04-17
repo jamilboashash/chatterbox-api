@@ -1,5 +1,5 @@
 def process_sync():
-    print('Received a SYNC operation')
+    print('Received a SYNC operation \nExecuting chatterbox')
 
     exec('chatterbox')
 

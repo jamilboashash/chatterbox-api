@@ -45,7 +45,7 @@ def run_chatterbox(post_request):
     print('command: ', command)
     print('command type: ', type(command))
 
-    subprocess.run(['chatterbox', 'run', '--input-file', 'test.in'])
+    subprocess.run(command)
 
     print('subprocess finished...', flush=True)
 

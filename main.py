@@ -1,13 +1,15 @@
+import os
+import psutil
 from datetime import datetime
 from typing import Union
 
-from flask import Flask, request, make_response, Response
+from flask import Flask, request
+
 from post import Post
-from postRequest import PostRequest, process_sync, process_async
-import subprocess
 
 # define Flask web app
 app = Flask(__name__)
+
 
 def run_chatterbox(post):
     """
@@ -24,7 +26,7 @@ def run_chatterbox(post):
         response = post.process_async()
         return response
 
-    return 400
+    return post.BAD_POST_REQUEST
 
 
 def parse_post_request(post_request):
@@ -39,15 +41,6 @@ def parse_post_request(post_request):
         # todo post.add_to_queue()
         # execute chatterbox using POST request body
         response = run_chatterbox(post)
-
-    # if operation == 'SYNC':
-    #     process_sync()
-    #
-    # elif operation == 'ASYNC':
-    #     process_async()
-    # else:
-    #     # todo - clarify with tutor how to handle this case - exit_with_code(Exit.BAD_OPERATION) ?
-    #     pass
 
     return response
 
@@ -66,7 +59,6 @@ def is_valid_json():
 
 @app.route('/text', methods=['GET', 'POST'])
 def process_text_request() -> Union[int, dict]:
-
     if request.get_json() is None:
         return 400  # if the request is NOT valid json then return error code 400
 
@@ -83,12 +75,28 @@ def process_text_request() -> Union[int, dict]:
 
 @app.route('/model', methods=['GET'])
 def process_model_request():
+    response = """['tts_models.en.ek1.tacotron2',
+                'tts_models.en.ljspeech.tacotron2-DDC',
+                'tts_models.en.ljspeech.glow-tts',
+                'tts_models.en.ljspeech.fast_pitch']"""
+
+    return response
+
+
+@app.route('/model/<id>', methods=['GET'])
+def process_model_id_request():
     pass
+    # return response
 
 
 @app.route('/health', methods=['GET'])
 def process_health_request():
-    pass
+
+    process = psutil.Process(os.getpid())
+    response = {'healthy': 'true',
+                'memoryUsage': process.memory_info().rss}  # in bytes
+
+    return response
 
 
 # todo - how to handle dynamic request e.g. /model/{id}

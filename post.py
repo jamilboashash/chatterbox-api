@@ -7,6 +7,7 @@ import subprocess
 
 class Post:
     id_iter = itertools.count()
+    BAD_POST_REQUEST = 400
 
     def __init__(self, post_request, created_at):
         self.request_id = next(self.id_iter)
@@ -120,10 +121,15 @@ class Post:
         print('command: ', command)
         subprocess.run(command)
         print('subprocess finished...', flush=True)
+        self.clean_up()
 
         response = self.construct_response()
         return response
 
     def process_async(self):
         # todo - process asynchronously
+        pass
+
+    def clean_up(self):
+        # todo - delete temp/message.in file
         pass

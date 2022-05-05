@@ -122,7 +122,6 @@ class Post:
         subprocess.run(command)
         print('subprocess finished...', flush=True)
         self.clean_up()
-
         response = self.construct_response()
         return response
 

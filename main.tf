@@ -12,7 +12,26 @@ provider "aws" {
   shared_credentials_file = "./credentials"
 }
 
+resource "aws_instance" "chatterbox-api" {
+  ami = "ami-0a8b4cd432b1c3063"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "chatterbox"
+  }
+}
+
 #resource "local_file" "url" {
 #  content = # some resource output here
 #  filename = "./api.txt"
+#}
+
+#resource "random_string" "chatterbox-s3-bucket" {
+#  length = 16
+#  special = false
+#  upper = false
+#}
+#
+#resource "aws_s3_bucket" "bucket" {
+#  bucket = "my-bucket-${random_string.chatterbox-s3-bucket.result}"
 #}

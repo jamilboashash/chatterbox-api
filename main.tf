@@ -21,10 +21,10 @@ resource "aws_instance" "chatterbox-api" {
   }
 }
 
-#resource "local_file" "url" {
-#  content = # some resource output here
-#  filename = "./api.txt"
-#}
+resource "local_file" "url" {
+  content = aws_instance.chatterbox-api.public_ip
+  filename = "./api.txt"
+}
 
 #resource "random_string" "chatterbox-s3-bucket" {
 #  length = 16

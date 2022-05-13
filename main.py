@@ -57,18 +57,12 @@ def is_valid_json():
     return request.get_json() is not None
 
 
-@app.route('/text', methods=['GET', 'POST'])
-def process_text_request() -> Union[int, dict]:
-    if request.get_json() is None:
-        return 400  # if the request is NOT valid json then return error code 400
+@app.route('/health', methods=['GET'])
+def process_health_request():
 
-    # if we get here we definitely received valid json
-    if request.method == 'POST':
-        response = parse_post_request(request.get_json())
-
-    elif request.method == 'GET':
-        # response = parse_get_request(request)
-        pass
+    process = psutil.Process(os.getpid())
+    response = {'healthy': 'true',
+                'memoryUsage': process.memory_info().rss}  # in bytes
 
     return response
 
@@ -89,17 +83,53 @@ def process_model_id_request():
     # return response
 
 
-@app.route('/health', methods=['GET'])
-def process_health_request():
+@app.route('/text', methods=['GET', 'POST'])
+def process_text_request() -> Union[int, dict]:
+    if request.get_json() is None:
+        return 400  # if the request is NOT valid json then return error code 400
 
-    process = psutil.Process(os.getpid())
-    response = {'healthy': 'true',
-                'memoryUsage': process.memory_info().rss}  # in bytes
+    # if we get here we definitely received valid json
+    if request.method == 'POST':
+        response = parse_post_request(request.get_json())
+
+    elif request.method == 'GET':
+        # response = parse_get_request(request)
+        pass
 
     return response
 
 
+@app.route('/text/<id>', methods=['GET'])
+def process_text_id_request():
+    if request.get_json() is None:
+        return 400  # if the request is NOT valid json then return error code 400
+
+    # if we get here we definitely received valid json
+    if request.method == 'DELETE':
+        # response = parse_delete_request(request.get_json())
+        pass
+
+    elif request.method == 'GET':
+        # response = parse_get_request(request)
+        pass
+
+    return None  # todo - return response
+
+
 # todo - how to handle dynamic request e.g. /model/{id}
 
+def download_models():
+    # todo - download the supported models to avoid long waits on incoming requests.
+    pass
 
-app.run(debug=True)  # threaded=True
+
+def setwd():
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+    return
+
+
+setwd()
+download_models()
+app.run(debug=True)  # todo - remove debug=True

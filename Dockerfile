@@ -1,5 +1,7 @@
 FROM ubuntu:18.04
 
+SHELL ["/bin/bash", "-c"]
+
 RUN apt-get update -y
 RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa
@@ -14,8 +16,11 @@ WORKDIR /home/chatterbox
 ADD . /home/chatterbox
 
 RUN python3.9 -m venv venv
-RUN source venv/bin/activate
-RUN pip install -r requirements.txt
+RUN source venv/bin/activate && pip install -r requirements.txt
+
+#EXPOSE 5000
+
+# todo - make sure we are in venv when executing below command
 #CMD ["python3.9","main.py"]
 
 #ENV PATH=/home/chatterbox:$PATH

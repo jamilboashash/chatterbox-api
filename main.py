@@ -130,6 +130,7 @@ def setwd():
     return
 
 
-setwd()
-download_models()
-app.run(debug=True)  # todo - remove debug=True
+if __name__ == "__main__":
+    setwd()
+    download_models()
+    app.run(debug=True, host='0.0.0.0', port=5000)  # todo - remove debug=True

@@ -13,7 +13,7 @@ RUN apt-get install build-essential -y
 #RUN #apt-get install git -y
 
 WORKDIR /home/chatterbox
-ADD . /home/chatterbox
+COPY  main.py model.py post.py temp out requirements.txt /home/chatterbox/
 
 RUN python3.9 -m venv venv
 RUN source venv/bin/activate && pip install -r requirements.txt

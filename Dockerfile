@@ -10,6 +10,7 @@ RUN apt-get install python3-pip -y
 RUN apt-get install python3.9-dev -y
 RUN apt-get install python3.9-venv -y
 RUN apt-get install build-essential -y
+RUN apt-get install libsndfile1
 #RUN #apt-get install git -y
 
 WORKDIR /home/chatterbox

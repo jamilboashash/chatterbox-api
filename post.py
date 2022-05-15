@@ -10,13 +10,13 @@ class Post:
     BAD_POST_REQUEST = 400
 
     def __init__(self, post_request, created_at):
-        self.request_id = next(self.id_iter)
+        self.request_id = self.id_iter
         self.message = post_request['message']
         self.operation = post_request['operation']
         if 'model' in post_request:
             self.model = post_request['model']
         else:
-            self.model = 'tts_models/en/ljspeech/glow-tts'
+            self.model = 'tts_models/en/ljspeech/glow-tts'  # chatterbox default model
         self.status = None
         self.resource = None
         self.created_at = created_at
@@ -42,27 +42,30 @@ class Post:
         """
         command = ['chatterbox', 'run']
 
-        # --model
-        if hasattr(self, 'model'):
-            model = self.model.replace('.', '/')
-            command.extend(['--model', model])
+        # --model argument
+        model = self.model.replace('.', '/')
+        command.extend(['--model', model])
 
-        # --input-file
+        print(command)
+
+        # --input-file argument
         # create new file and write 'message' contents into it, then give the filename to 'command'
-        filename = 'temp/message.in'  # todo update this
-        with open(filename, 'x') as file:
+        filename = './message.in'
+        with open(filename, 'w') as file:
             file.write(self.message)
         command.extend(['--input-file', filename])
 
-        # --out-path (leaving blank for default)
-        # --run-id todo - confirm details with tutors and implement!
+        # --out-path argument (leaving blank for default)
+        # --run-id argument todo - confirm details with tutors and implement!
+
+        print('command: ', command)
 
         return command
 
     def construct_response(self):
 
         # read json file
-        files = glob.glob('./out/*.json')
+        files = glob.glob('out/*.json')
         latest = max(files, key=os.path.getctime)
         print('Latest file:\n', latest)
         with open(latest, 'r') as file:
@@ -71,7 +74,7 @@ class Post:
         print('json file:\n', json_file)
         # process_json_file(json_file)
 
-        self.status = 'COMPLETED'
+        self.status = 'COMPLETED'  # todo - implement properly
         if 'result' in json_file:
             self.resource = json_file['result']['wav']
             print('Resource:\n', json_file['result']['wav'])
@@ -81,15 +84,15 @@ class Post:
             self.error = json_file['result']['error']
             print('Error:\n', self.error)
 
-        example = {"id": "2bf02bea-c0fd-43ee-b5f0-77e7117b2261",
-                   "message": "Hello, CSSE6400!",
-                   "operation": "SYNC",
-                   "model": "tts_models.en.ljspeech.glow-tts",
-                   "status": "COMPLETED",
-                   "resource": "http://storage:4566/chatterbox-texts/2bf02bea-c0fd-43ee-b5f0-77e7117b2261.wav",
-                   "created_at": "2022-04-26T07:22:10.467Z",
-                   "processed_at": "2022-04-26T07:22:19.171Z",
-                   "error": 'null'}
+        # example = {"id": "2bf02bea-c0fd-43ee-b5f0-77e7117b2261",
+        #            "message": "Hello, CSSE6400!",
+        #            "operation": "SYNC",
+        #            "model": "tts_models.en.ljspeech.glow-tts",
+        #            "status": "COMPLETED",
+        #            "resource": "http://storage:4566/chatterbox-texts/2bf02bea-c0fd-43ee-b5f0-77e7117b2261.wav",
+        #            "created_at": "2022-04-26T07:22:10.467Z",
+        #            "processed_at": "2022-04-26T07:22:19.171Z",
+        #            "error": 'null'}
 
         response = self.generate_response(self.message, self.operation, self.model, self.status,
                                           self.resource, self.created_at, self.processed_at, self.error)
@@ -105,10 +108,11 @@ class Post:
         print('Length of message:\n\t', len(self.message))
 
         if (0 < len(self.message) <= 280) and (self.operation == 'SYNC'):
-            print('We get here!', flush=True)
+            print('SYNC POST /text request is valid...', flush=True)
             return True
 
         elif (len(self.message) > 280) and (self.operation == 'ASYNC'):
+            print('ASYNC POST /text request is valid...', flush=True)
             return True
 
         # todo - validate the model field
@@ -118,7 +122,6 @@ class Post:
     def process_sync(self):
 
         command = self.construct_command()
-        print('command: ', command)
         subprocess.run(command)
         print('subprocess finished...', flush=True)
         self.clean_up()

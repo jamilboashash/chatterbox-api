@@ -6,8 +6,8 @@
 # 4. The deploy.sh script must create a file named api.txt which contains the URL where your API is deployed to.
 # 5. We will run automated functionality and load-testing on the URL provided in the api.txt file.
 
-touch api.txt
-# URL = deploy instance using terraform and return URL
+echo "${GH_PAT}" | docker login ghcr.io -u jamilboashash --password-stdin
+
 terraform apply -auto-approve
-#echo "${URL}" > api.txt
+
 

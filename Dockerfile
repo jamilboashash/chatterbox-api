@@ -18,7 +18,8 @@ COPY  main.py model.py post.py message.in requirements.txt /home/chatterbox/
 RUN python3.9 -m venv venv
 RUN source venv/bin/activate && pip install -r requirements.txt
 
-#ENV PATH="venv/bin:$PATH"
-CMD ["venv/bin/python3","main.py"]
+ENV PATH="venv/bin:$PATH"
+
+CMD ["python3.9","main.py"]
 
 

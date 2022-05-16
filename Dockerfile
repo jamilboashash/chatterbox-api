@@ -10,18 +10,15 @@ RUN apt-get install python3-pip -y
 RUN apt-get install python3.9-dev -y
 RUN apt-get install python3.9-venv -y
 RUN apt-get install build-essential -y
-RUN apt-get install libsndfile1
-#RUN #apt-get install git -y
+RUN apt-get install libsndfile1 -y
 
 WORKDIR /home/chatterbox
-COPY  main.py model.py post.py temp out requirements.txt /home/chatterbox/
+COPY  main.py model.py post.py message.in requirements.txt /home/chatterbox/
 
 RUN python3.9 -m venv venv
 RUN source venv/bin/activate && pip install -r requirements.txt
 
-#EXPOSE 5000
+#ENV PATH="venv/bin:$PATH"
+CMD ["venv/bin/python3","main.py"]
 
-# todo - make sure we are in venv when executing below command
-#CMD ["python3.9","main.py"]
 
-#ENV PATH=/home/chatterbox:$PATH

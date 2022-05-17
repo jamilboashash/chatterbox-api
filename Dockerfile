@@ -13,7 +13,8 @@ RUN apt-get install build-essential -y
 RUN apt-get install libsndfile1 -y
 
 WORKDIR /home/chatterbox
-COPY  main.py model.py post.py message.in requirements.txt /home/chatterbox/
+COPY  main.py model.py post.py requirements.txt /home/chatterbox/
+RUN touch /home/chatterbox/message.in
 
 RUN python3.9 -m venv venv
 RUN source venv/bin/activate && pip install -r requirements.txt

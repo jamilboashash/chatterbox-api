@@ -3,7 +3,7 @@ import psutil
 from datetime import datetime
 from typing import Union
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from post import Post
 
@@ -59,7 +59,6 @@ def is_valid_json():
 
 @app.route('/health', methods=['GET'])
 def process_health_request():
-
     process = psutil.Process(os.getpid())
     response = {'healthy': 'true',
                 'memoryUsage': process.memory_info().rss}  # in bytes
@@ -69,10 +68,10 @@ def process_health_request():
 
 @app.route('/model', methods=['GET'])
 def process_model_request():
-    response = """['tts_models.en.ek1.tacotron2',
-                'tts_models.en.ljspeech.tacotron2-DDC',
-                'tts_models.en.ljspeech.glow-tts',
-                'tts_models.en.ljspeech.fast_pitch']"""
+    response = jsonify(['tts_models.en.ek1.tacotron2',
+                        'tts_models.en.ljspeech.tacotron2-DDC',
+                        'tts_models.en.ljspeech.glow-tts',
+                        'tts_models.en.ljspeech.fast_pitch'])
 
     return response
 
